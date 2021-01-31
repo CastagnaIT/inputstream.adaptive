@@ -317,6 +317,7 @@ bool KodiAdaptiveStream::download(const char* url,
 {
   bool retry_403 = true;
   bool retry_MRT = true;
+  int retry_count = 2;
   kodi::vfs::CFile file;
   std::string newUrl;
 
@@ -410,6 +411,12 @@ RETRY:
     }
     file.Close();
     return nbRead == 0;
+  }
+  else if (retry_count > 0)
+  {
+    kodi::Log(ADDON_LOG_ERROR, "Download %s failed, new attempt...", url);
+    retry_count--;
+    goto RETRY;
   }
   return false;
 }
