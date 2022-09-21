@@ -10,6 +10,7 @@
 
 #include "../SSD_dll.h"
 #include "../utils/PropertiesUtils.h"
+#include "BaseUrl.h"
 #include "expat.h"
 
 #include <algorithm>
@@ -210,6 +211,7 @@ public:
     std::string codec_private_data_;
     std::string source_url_;
     std::string base_url_;
+    std::vector<ADAPTIVE_TREE::BaseUrl> m_baseUrls;
     uint32_t bandwidth_; // as bit/s
     uint32_t samplingRate_;
     int width_;
@@ -243,7 +245,7 @@ public:
     uint16_t pssh_set_;
     uint32_t expired_segments_;
     ContainerType containerType_;
-    SegmentTemplate segtpl_;
+    SegmentTemplate* segtpl_;
     uint64_t startNumber_;
     uint64_t nextPts_;
     //SegmentList
@@ -255,7 +257,7 @@ public:
     SPINCACHE<Segment> segments_;
     std::chrono::time_point<std::chrono::system_clock> repLastUpdated_;
     const Segment *current_segment_;
-    const Segment *get_initialization()const { return (flags_ & INITIALIZATION) ? &initialization_ : 0; };
+    const Segment *get_initialization()const { return (flags_ & INITIALIZATION) ? &initialization_ : nullptr; };
     const Segment* get_next_segment(const Segment* seg) const
     {
       if (!seg || seg == &initialization_)
@@ -339,7 +341,7 @@ public:
     std::vector<std::string> switching_ids_;
     std::vector<Representation*> representations_;
     SPINCACHE<uint32_t> segment_durations_;
-    SegmentTemplate segtpl_;
+    SegmentTemplate* segtpl_;
 
     const uint32_t get_segment_duration(size_t pos)
     {
@@ -474,7 +476,7 @@ public:
     uint32_t included_types_ = 0;
     bool need_secure_decoder_ = false;
     SPINCACHE<uint32_t> segment_durations_;
-    SegmentTemplate segtpl_;
+    //SegmentTemplate segtpl_;
   }*current_period_, *next_period_;
 
   std::vector<Period*> periods_;

@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MPD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mpeg:dash:schema:mpd:2011" xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd" type="static" mediaPresentationDuration="PT1430.906S" minBufferTime="PT4S" profiles="urn:mpeg:dash:profile:full:2011">
+    <Period>
+        <AdaptationSet id="1" segmentAlignment="true" maxWidth="1920" maxHeight="1080" maxFrameRate="45000/1877">
+            <SegmentTemplate timescale="1000" media="fragment-$Number$-$RepresentationID$.m4s?URLPrefix=aHR0cHM6Ly9wcm9kLmdjY3J1bmNoeXJvbGwuY29tL2V2czMvMzM0YzNjZTczOGU1NzNkYTU4ZjNlNTVlNTU2ZDY5MDAvYXNzZXRzL3AvYzMwNjY4YWIxZDdkMTAxNjY5MzhmMDZiOTY0M2EyNTRfLDQ0Nzc2NTEubXA0LDQ0Nzc2NTIubXA0LDQ0Nzc2NTAubXA0LDQ0Nzc2NDgubXA0LDQ0Nzc2NDkubXA0LC51cmxzZXQv&amp;Expires=1663530252117&amp;KeyName=cdn-prod-keyset&amp;Signature=gYngjx0pz4bbDcdHSGN8M7THz_VBE9_UYRalhZnWi0DjoXQWpJLmF01U0iQPzwTg54PxtGATNS-8TW9khyBTBQ&amp;t=exp=1663530253~acl=/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/*~hmac=f2799352f068de16dbdd1f479c65d0486e0ea5910e230fa028a7fabefd593106" initialization="init-$RepresentationID$.mp4?URLPrefix=aHR0cHM6Ly9wcm9kLmdjY3J1bmNoeXJvbGwuY29tL2V2czMvMzM0YzNjZTczOGU1NzNkYTU4ZjNlNTVlNTU2ZDY5MDAvYXNzZXRzL3AvYzMwNjY4YWIxZDdkMTAxNjY5MzhmMDZiOTY0M2EyNTRfLDQ0Nzc2NTEubXA0LDQ0Nzc2NTIubXA0LDQ0Nzc2NTAubXA0LDQ0Nzc2NDgubXA0LDQ0Nzc2NDkubXA0LC51cmxzZXQv&amp;Expires=1663530252117&amp;KeyName=cdn-prod-keyset&amp;Signature=gYngjx0pz4bbDcdHSGN8M7THz_VBE9_UYRalhZnWi0DjoXQWpJLmF01U0iQPzwTg54PxtGATNS-8TW9khyBTBQ&amp;t=exp=1663530253~acl=/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/*~hmac=f2799352f068de16dbdd1f479c65d0486e0ea5910e230fa028a7fabefd593106" startNumber="1">
+                <SegmentTimeline>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004"/>
+                    <S d="4004" r="1"/>
+                    <S d="4004"/>
+                    <S d="1376"/>
+                </SegmentTimeline>
+            </SegmentTemplate>
+            <Representation id="f1-v1-x3" mimeType="video/mp4" codecs="avc1.640028" width="1280" height="720" frameRate="45000/1877" sar="1:1" startWithSAP="1" bandwidth="3989784">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+            <Representation id="f2-v1-x3" mimeType="video/mp4" codecs="avc1.640028" width="1920" height="1080" frameRate="45000/1877" sar="1:1" startWithSAP="1" bandwidth="7994555">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+            <Representation id="f3-v1-x3" mimeType="video/mp4" codecs="avc1.4d401f" width="848" height="480" frameRate="45000/1877" sar="1:1" startWithSAP="1" bandwidth="1991971">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+            <Representation id="f4-v1-x3" mimeType="video/mp4" codecs="avc1.4d401e" width="640" height="360" frameRate="45000/1877" sar="1:1" startWithSAP="1" bandwidth="994903">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+            <Representation id="f5-v1-x3" mimeType="video/mp4" codecs="avc1.42c015" width="428" height="240" frameRate="45000/1877" sar="1:1" startWithSAP="1" bandwidth="499121">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+        </AdaptationSet>
+        <AdaptationSet id="2" segmentAlignment="true">
+            <AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="1"/>
+            <SegmentTemplate timescale="1000" media="fragment-$Number$-$RepresentationID$.m4s?URLPrefix=aHR0cHM6Ly9wcm9kLmdjY3J1bmNoeXJvbGwuY29tL2V2czMvMzM0YzNjZTczOGU1NzNkYTU4ZjNlNTVlNTU2ZDY5MDAvYXNzZXRzL3AvYzMwNjY4YWIxZDdkMTAxNjY5MzhmMDZiOTY0M2EyNTRfLDQ0Nzc2NTEubXA0LDQ0Nzc2NTIubXA0LDQ0Nzc2NTAubXA0LDQ0Nzc2NDgubXA0LDQ0Nzc2NDkubXA0LC51cmxzZXQv&amp;Expires=1663530252117&amp;KeyName=cdn-prod-keyset&amp;Signature=gYngjx0pz4bbDcdHSGN8M7THz_VBE9_UYRalhZnWi0DjoXQWpJLmF01U0iQPzwTg54PxtGATNS-8TW9khyBTBQ&amp;t=exp=1663530253~acl=/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/*~hmac=f2799352f068de16dbdd1f479c65d0486e0ea5910e230fa028a7fabefd593106" initialization="init-$RepresentationID$.mp4?URLPrefix=aHR0cHM6Ly9wcm9kLmdjY3J1bmNoeXJvbGwuY29tL2V2czMvMzM0YzNjZTczOGU1NzNkYTU4ZjNlNTVlNTU2ZDY5MDAvYXNzZXRzL3AvYzMwNjY4YWIxZDdkMTAxNjY5MzhmMDZiOTY0M2EyNTRfLDQ0Nzc2NTEubXA0LDQ0Nzc2NTIubXA0LDQ0Nzc2NTAubXA0LDQ0Nzc2NDgubXA0LDQ0Nzc2NDkubXA0LC51cmxzZXQv&amp;Expires=1663530252117&amp;KeyName=cdn-prod-keyset&amp;Signature=gYngjx0pz4bbDcdHSGN8M7THz_VBE9_UYRalhZnWi0DjoXQWpJLmF01U0iQPzwTg54PxtGATNS-8TW9khyBTBQ&amp;t=exp=1663530253~acl=/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/*~hmac=f2799352f068de16dbdd1f479c65d0486e0ea5910e230fa028a7fabefd593106" startNumber="1">
+                <SegmentTimeline>
+                    <S d="4017"/>
+                </SegmentTimeline>
+            </SegmentTemplate>
+            <Representation id="f1-a1-x3" mimeType="audio/mp4" codecs="mp4a.40.2" audioSamplingRate="44100" startWithSAP="1" bandwidth="128000">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+            <Representation id="f3-a1-x3" mimeType="audio/mp4" codecs="mp4a.40.2" audioSamplingRate="44100" startWithSAP="1" bandwidth="96000">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+            <Representation id="f5-a1-x3" mimeType="audio/mp4" codecs="mp4a.40.2" audioSamplingRate="22050" startWithSAP="1" bandwidth="64000">
+                <BaseURL>https://prod.gccrunchyroll.com/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+                <BaseURL>https://ll.v.vrv.co/evs3/334c3ce738e573da58f3e55e556d6900/assets/p/c30668ab1d7d10166938f06b9643a254_,4477651.mp4,4477652.mp4,4477650.mp4,4477648.mp4,4477649.mp4,.urlset/</BaseURL>
+            </Representation>
+        </AdaptationSet>
+    </Period>
+</MPD>

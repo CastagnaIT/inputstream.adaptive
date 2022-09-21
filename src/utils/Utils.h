@@ -47,4 +47,6 @@ constexpr uint32_t MakeFourCC(char c1, char c2, char c3, char c4)
     (static_cast<uint32_t>(c3) << 16) | (static_cast<uint32_t>(c4) << 24));
 }
 
+int GenerateRandomNumber(int rangeMin, int rangeMax);
+
 } // namespace UTILS

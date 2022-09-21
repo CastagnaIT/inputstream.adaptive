@@ -500,6 +500,14 @@ TEST_F(DASHTreeTest, CalculateReprensentationBaseURL)
   EXPECT_EQ(tree->periods_[0]->adaptationSets_[1]->representations_[2]->segtpl_.media, "https://foo.bar/mpd/slices2/C$Number%08d$.m4f");
 }
 
+TEST_F(DASHTreeTest, CalculateReprensentationBaseURLCase2)
+{
+  OpenTestFile("mpd/rep_base_url_2.mpd", "https://pl.foobar.com/assets/p/c30668ab1d7d10166938f06b9643a254.urlset/manifest.mpd", "");
+
+  EXPECT_EQ(tree->periods_[0]->adaptationSets_[0]->representations_[0]->segtpl_.initialization, "https://pl.foobar.com/assets/p/c30668ab1d7d10166938f06b9643a254.urlset/init-f1-v1-x3.mp4");
+  EXPECT_EQ(tree->periods_[0]->adaptationSets_[0]->representations_[0]->segtpl_.media, "https://ll.foo.co/evs3/assets/p/c30668ab1d7d10166938f06b9643a254.urlset/fragment-$Number$-f1-v1-x3.m4s");
+}
+
 TEST_F(DASHTreeAdaptiveStreamTest, MisalignedSegmentTimeline)
 {
   OpenTestFile("mpd/bad_segtimeline_1.mpd", "https://foo.bar/placeholders.mpd", "");

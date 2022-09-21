@@ -648,17 +648,21 @@ bool AdaptiveStream::prepareNextDownload()
 
   const AdaptiveTree::Representation* rep = segment_buffers_[valid_segment_buffers_].rep;
   const AdaptiveTree::Segment* seg = &segment_buffers_[valid_segment_buffers_].segment;
-  // segNum == ~0U is initialization segment!
+
   uint64_t segNum = segment_buffers_[valid_segment_buffers_].segment_number;
+  //! @TODO: Get rid of ~0ULL as initialize segment placeholder
+  bool isInitSegment = !~segNum;
+
   segment_buffers_[valid_segment_buffers_].buffer.clear();
   ++valid_segment_buffers_;
 
-  return prepareDownload(rep, seg, segNum);
+  return prepareDownload(rep, seg, segNum, isInitSegment);
 }
 
 bool AdaptiveStream::prepareDownload(const AdaptiveTree::Representation* rep,
                                      const AdaptiveTree::Segment* seg,
-                                     uint64_t segNum)
+                                     uint64_t segNum,
+                                     bool isInitSegment)
 {
   if (!seg)
     return false;
@@ -680,7 +684,7 @@ bool AdaptiveStream::prepareDownload(const AdaptiveTree::Representation* rep,
         download_url_ = rep->url_;
       if (~seg->range_begin_)
       {
-        uint64_t fileOffset = ~segNum ? m_segmentFileOffset : 0;
+        uint64_t fileOffset = !isInitSegment ? m_segmentFileOffset : 0;
         if (~seg->range_end_)
           sprintf(rangebuf, "bytes=%" PRIu64 "-%" PRIu64, seg->range_begin_ + fileOffset,
                   seg->range_end_ + fileOffset);
@@ -689,9 +693,9 @@ bool AdaptiveStream::prepareDownload(const AdaptiveTree::Representation* rep,
         rangeHeader = rangebuf;
       }
     }
-    else if (~segNum) //templated segment
+    else if (!isInitSegment) //templated segment
     {
-      download_url_ = rep->segtpl_.media;
+      download_url_ = rep->segtpl_->media;
       ReplacePlaceholder(download_url_, "$Number", seg->range_end_);
       ReplacePlaceholder(download_url_, "$Time", seg->range_begin_);
     }
@@ -700,9 +704,9 @@ bool AdaptiveStream::prepareDownload(const AdaptiveTree::Representation* rep,
   }
   else
   {
-    if (rep->flags_ & AdaptiveTree::Representation::TEMPLATE && ~segNum)
+    if (rep->flags_ & AdaptiveTree::Representation::TEMPLATE && !isInitSegment)
     {
-      download_url_ = rep->segtpl_.media;
+      download_url_ = rep->segtpl_->media;
       ReplacePlaceholder(download_url_, "$Number", rep->startNumber_);
       ReplacePlaceholder(download_url_, "$Time", 0);
     }
@@ -710,7 +714,7 @@ bool AdaptiveStream::prepareDownload(const AdaptiveTree::Representation* rep,
       download_url_ = rep->url_;
     if (~seg->range_begin_)
     {
-      uint64_t fileOffset = ~segNum ? m_segmentFileOffset : 0;
+      uint64_t fileOffset = !isInitSegment ? m_segmentFileOffset : 0;
       if (~seg->range_end_)
         sprintf(rangebuf, "bytes=%" PRIu64 "-%" PRIu64, seg->range_begin_ + fileOffset,
                 seg->range_end_ + fileOffset);
@@ -1113,22 +1117,28 @@ bool AdaptiveStream::ResolveSegmentBase(AdaptiveTree::Representation* rep, bool 
   {
     // We assume mutex_dl is locked so we can safely call prepare_download
     AdaptiveTree::Segment seg;
-    unsigned int segNum = ~0U;
-    if (rep->indexRangeMin_ || !(rep->get_initialization()))
+
+    // Initialization segment, if exists
+    const AdaptiveTree::Segment* initSegment = rep->get_initialization();
+    bool isInitSegment = false;
+
+    if (rep->indexRangeMin_ || !initSegment)
     {
       seg.range_begin_ = rep->indexRangeMin_;
       seg.range_end_ = rep->indexRangeMax_;
       seg.startPTS_ = ~0ULL;
       seg.pssh_set_ = 0;
-      segNum = 0; // It's no an initialization segment
     }
-    else if (rep->get_initialization())
-      seg = *rep->get_initialization();
+    else if (initSegment)
+    {
+      isInitSegment = true;
+      seg = *initSegment;
+    }
     else
       return false;
 
     std::string sidxBuffer;
-    if (prepareDownload(rep, &seg, segNum) &&
+    if (prepareDownload(rep, &seg, 0, isInitSegment) &&
         download(download_url_, download_headers_, &sidxBuffer) && parseIndexRange(rep, sidxBuffer))
     {
       const_cast<AdaptiveTree::Representation*>(rep)->flags_ &=

@@ -80,35 +80,35 @@ static uint8_t GetChannels(const char** attr)
 
 static uint64_t ParseSegmentTemplate(const char** attr,
                                          std::string baseURL,
-                                         DASHTree::SegmentTemplate& tpl,
+                                         DASHTree::SegmentTemplate* tpl,
                                          uint64_t startNumber)
 {
   for (; *attr;)
   {
     if (strcmp((const char*)*attr, "timescale") == 0)
-      tpl.timescale = atoi((const char*)*(attr + 1));
+      tpl->timescale = atoi((const char*)*(attr + 1));
     else if (strcmp((const char*)*attr, "duration") == 0)
-      tpl.duration = atoi((const char*)*(attr + 1));
+      tpl->duration = atoi((const char*)*(attr + 1));
     else if (strcmp((const char*)*attr, "media") == 0)
-      tpl.media = (const char*)*(attr + 1);
+      tpl->media = (const char*)*(attr + 1);
     else if (strcmp((const char*)*attr, "startNumber") == 0)
       startNumber = atoi((const char*)*(attr + 1));
     else if (strcmp((const char*)*attr, "initialization") == 0)
-      tpl.initialization = (const char*)*(attr + 1);
+      tpl->initialization = (const char*)*(attr + 1);
     attr += 2;
   }
 
-  if (!tpl.timescale) // if not specified timescale defaults to seconds
-    tpl.timescale = 1;
+  if (!tpl->timescale) // if not specified timescale defaults to seconds
+    tpl->timescale = 1;
 
-  if (!URL::IsUrlAbsolute(tpl.media))
+  if (!URL::IsUrlAbsolute(tpl->media))
   {
-    tpl.media = URL::Join(baseURL, tpl.media);
+    tpl->media = URL::Join(baseURL, tpl->media);
   }
 
-  if (!URL::IsUrlAbsolute(tpl.initialization))
+  if (!URL::IsUrlAbsolute(tpl->initialization))
   {
-    tpl.initialization = URL::Join(baseURL, tpl.initialization);
+    tpl->initialization = URL::Join(baseURL, tpl->initialization);
   }
   return startNumber;
 }
@@ -213,10 +213,12 @@ bool ParseContentProtection(const char** attr, DASHTree* dash)
 |   expat start
 +---------------------------------------------------------------------*/
 
-static void ReplacePlaceHolders(std::string& rep, const std::string& id, uint32_t bandwidth)
+static std::string ReplacePlaceHolders(const std::string& templateUrl, const std::string& id, uint32_t bandwidth)
 {
-  STRING::ReplaceAll(rep, "$RepresentationID$", id);
-  STRING::ReplaceAll(rep, "$Bandwidth$", std::to_string(bandwidth));
+  std::string url = templateUrl;
+  STRING::ReplaceAll(url, "$RepresentationID$", id);
+  STRING::ReplaceAll(url, "$Bandwidth$", std::to_string(bandwidth));
+  return url;
 }
 
 static void XMLCALL start(void* data, const char* el, const char** attr)
@@ -322,12 +324,12 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
                       dash->current_period_->duration_
                           ? dash->current_period_->duration_ / dash->current_period_->timescale_
                           : dash->overallSeconds_;
-                  if (dash->current_representation_->segtpl_.duration &&
-                      dash->current_representation_->segtpl_.timescale)
+                  if (dash->current_representation_->segtpl_->duration &&
+                      dash->current_representation_->segtpl_->timescale)
                     dash->current_representation_->segments_.data.reserve(
                         (unsigned int)((double)overallSeconds /
-                                       (((double)dash->current_representation_->segtpl_.duration) /
-                                        dash->current_representation_->segtpl_.timescale)) +
+                                       (((double)dash->current_representation_->segtpl_->duration) /
+                                        dash->current_representation_->segtpl_->timescale)) +
                         1);
 
                   if (dash->current_representation_->flags_ &
@@ -342,7 +344,7 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
                   s.range_end_ =
                       dash->current_representation_->segments_.data.back().range_end_ + 1;
                 s.range_begin_ = s.startPTS_ = dash->timeline_time_;
-                s.startPTS_ -= dash->base_time_ * dash->current_representation_->segtpl_.timescale;
+                s.startPTS_ -= dash->base_time_ * dash->current_representation_->segtpl_->timescale;
 
                 for (; r; --r)
                 {
@@ -446,27 +448,28 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
             if (dash->current_representation_->indexRangeMax_)
               dash->currentNode_ |= MPDNODE_SEGMENTLIST;
           }
-          else if (strcmp(el, "SegmentTemplate") == 0)
+          else if (strcmp(el, "SegmentTemplate") == 0) // Inside representation
           {
-            dash->current_representation_->segtpl_ = dash->current_adaptationset_->segtpl_;
+            if (!dash->current_representation_->segtpl_)
+              dash->current_representation_->segtpl_ = new AdaptiveTree::SegmentTemplate();
 
             dash->current_representation_->startNumber_ = ParseSegmentTemplate(
                 attr, dash->current_representation_->base_url_,
                 dash->current_representation_->segtpl_, dash->current_adaptationset_->startNumber_);
-            ReplacePlaceHolders(dash->current_representation_->segtpl_.media,
+            ReplacePlaceHolders(dash->current_representation_->segtpl_->media,
                                 dash->current_representation_->id,
                                 dash->current_representation_->bandwidth_);
             dash->current_representation_->flags_ |= DASHTree::Representation::TEMPLATE;
-            if (!dash->current_representation_->segtpl_.initialization.empty())
+            if (!dash->current_representation_->segtpl_->initialization.empty())
             {
-              ReplacePlaceHolders(dash->current_representation_->segtpl_.initialization,
+              ReplacePlaceHolders(dash->current_representation_->segtpl_->initialization,
                                   dash->current_representation_->id,
                                   dash->current_representation_->bandwidth_);
               dash->current_representation_->flags_ |= DASHTree::Representation::INITIALIZATION;
               dash->current_representation_->url_ =
-                  dash->current_representation_->segtpl_.initialization;
+                  dash->current_representation_->segtpl_->initialization;
               dash->current_representation_->timescale_ =
-                  dash->current_representation_->segtpl_.timescale;
+                  dash->current_representation_->segtpl_->timescale;
             }
             dash->timeline_time_ = 0;
             dash->currentNode_ |= MPDNODE_SEGMENTTEMPLATE;
@@ -483,7 +486,7 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
             }
           }
         }
-        else if (dash->currentNode_ & (MPDNODE_SEGMENTTEMPLATE | MPDNODE_SEGMENTLIST))
+        else if (dash->currentNode_ & (MPDNODE_SEGMENTTEMPLATE | MPDNODE_SEGMENTLIST)) // Inside adaption set
         {
           if (dash->currentNode_ & MPDNODE_SEGMENTTIMELINE)
           {
@@ -586,16 +589,19 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
               dash->current_adaptationset_->switching_ids_ = StringUtils::Split(value, ',');
           }
         }
-        else if (dash->currentNode_ & MPDNODE_BASEURL)
+        else if (dash->currentNode_ & MPDNODE_BASEURL) // Inside adaption set
         {
         }
-        else if (strcmp(el, "SegmentTemplate") == 0)
+        else if (strcmp(el, "SegmentTemplate") == 0) // Inside adaption set
         {
+          if (!dash->current_adaptationset_->segtpl_)
+            dash->current_adaptationset_->segtpl_ = new AdaptiveTree::SegmentTemplate();
+
           dash->current_adaptationset_->startNumber_ = ParseSegmentTemplate(
               attr, dash->current_adaptationset_->base_url_, dash->current_adaptationset_->segtpl_,
               dash->current_adaptationset_->startNumber_);
           dash->current_adaptationset_->timescale_ =
-              dash->current_adaptationset_->segtpl_.timescale;
+              dash->current_adaptationset_->segtpl_->timescale;
           dash->currentNode_ |= MPDNODE_SEGMENTTEMPLATE;
         }
         else if (strcmp(el, "SegmentList") == 0)
@@ -747,21 +753,21 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
           }
 
           dash->current_representation_->segtpl_ = dash->current_adaptationset_->segtpl_;
-          if (!dash->current_adaptationset_->segtpl_.media.empty())
+          if (!dash->current_adaptationset_->segtpl_->media.empty())
           {
             dash->current_representation_->flags_ |= DASHTree::Representation::TEMPLATE;
-            ReplacePlaceHolders(dash->current_representation_->segtpl_.media,
+            ReplacePlaceHolders(dash->current_representation_->segtpl_->media,
                                 dash->current_representation_->id,
                                 dash->current_representation_->bandwidth_);
 
             if (!dash->current_representation_->segtpl_.initialization.empty())
             {
               dash->current_representation_->flags_ |= DASHTree::Representation::INITIALIZATION;
-              ReplacePlaceHolders(dash->current_representation_->segtpl_.initialization,
+              ReplacePlaceHolders(dash->current_representation_->segtpl_->initialization,
                                   dash->current_representation_->id,
                                   dash->current_representation_->bandwidth_);
               dash->current_representation_->url_ =
-                  dash->current_representation_->segtpl_.initialization;
+                  dash->current_representation_->segtpl_->initialization;
             }
           }
           dash->currentNode_ |= MPDNODE_REPRESENTATION;
@@ -873,7 +879,8 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
         dash->current_adaptationset_->duration_ = dash->current_period_->duration_;
         dash->current_adaptationset_->segment_durations_ =
             dash->current_period_->segment_durations_;
-        dash->current_adaptationset_->segtpl_ = dash->current_period_->segtpl_;
+        //! TODO: Why coping segment template from previous adaptionset?
+        //dash->current_adaptationset_->segtpl_ = dash->current_period_->segtpl_;
         dash->current_adaptationset_->startNumber_ = dash->current_period_->startNumber_;
         dash->current_playready_wrmheader_.clear();
 
@@ -946,14 +953,19 @@ static void XMLCALL start(void* data, const char* el, const char** attr)
         dash->segcount_ = 0;
         dash->currentNode_ |= MPDNODE_ADAPTIONSET;
       }
-      else if (strcmp(el, "SegmentTemplate") == 0)
+      /*
+      else if (strcmp(el, "SegmentTemplate") == 0) //! @TODO: Inside period why?
       {
+        if (!dash->current_adaptationset_->segtpl_)
+          dash->current_adaptationset_->segtpl_ = new AdaptiveTree::SegmentTemplate();
+
         dash->current_period_->startNumber_ = ParseSegmentTemplate(
-            attr, dash->current_period_->base_url_, dash->current_period_->segtpl_,
+            attr, dash->current_period_->base_url_, dash->current_adaptationset_->segtpl_,
             dash->current_period_->startNumber_);
-        dash->current_period_->timescale_ = dash->current_period_->segtpl_.timescale;
+        dash->current_period_->timescale_ = dash->current_adaptationset_->segtpl_->timescale;
         dash->currentNode_ |= MPDNODE_SEGMENTTEMPLATE;
       }
+      */
       else if (strcmp(el, "SegmentList") == 0)
       {
         for (; *attr;)
@@ -1106,6 +1118,13 @@ static void XMLCALL end(void* data, const char* el)
               if (!URL::IsUrlAbsolute(url) && !URL::IsUrlRelative(url))
                 url = URL::Join(dash->current_adaptationset_->base_url_, url);
 
+              //! TODO: Read <BaseURL> properties
+              //! dvb:priority="xy"
+              //! dvb:weight="xy"
+              int priority = 1;
+              int weight = 1;
+
+              dash->current_representation_->m_baseUrls.push_back(ADAPTIVE_TREE::BaseUrl{url});
               dash->current_representation_->base_url_ = url;
 
               if (dash->current_representation_->flags_ & AdaptiveTree::Representation::TEMPLATE)
@@ -1113,13 +1132,25 @@ static void XMLCALL end(void* data, const char* el)
                 if (dash->current_representation_->flags_ &
                     AdaptiveTree::Representation::INITIALIZATION)
                 {
+                  /*
+                  LOG::Log(LOGERROR, "qui print url_ %s", dash->current_representation_->url_.c_str());
+                  LOG::Log(LOGERROR, "qui print base_url_ %s", dash->current_adaptationset_->base_url_.c_str());
+                  LOG::Log(LOGERROR, "qui print segtpl_ init: %s", dash->current_representation_->segtpl_.initialization.c_str());
+                  */
                   dash->current_representation_->url_ =
-                      URL::Join(url, dash->current_representation_->url_.substr(
+                      URL::Join(url, dash->current_representation_->segtpl_->initialization.substr(
                                           dash->current_adaptationset_->base_url_.size()));
+                  //LOG::Log(LOGERROR, "qui print %s", dash->current_representation_->url_.c_str());
+                  //LOG::Log(LOGERROR, "qui print fine");
                 }
-                dash->current_representation_->segtpl_.media =
-                    URL::Join(url, dash->current_representation_->segtpl_.media.substr(
+                //LOG::Log(LOGERROR, "qui print segtpl_.media: %s", dash->current_representation_->segtpl_.media.c_str());
+                //LOG::Log(LOGERROR, "qui print base_url_ %s", dash->current_adaptationset_->base_url_.c_str());
+                dash->current_representation_->segtpl_->media =
+                    URL::Join(url, dash->current_representation_->segtpl_->media.substr(
                                         dash->current_adaptationset_->base_url_.size()));
+
+ 
+                //LOG::Log(LOGERROR, "qui print %s", dash->current_representation_->segtpl_.media.c_str());
               }
               else
                 dash->current_representation_->url_ = url;
@@ -1149,7 +1180,7 @@ static void XMLCALL end(void* data, const char* el)
               if (strcmp(el, "SegmentTimeline") == 0)
                 dash->currentNode_ &= ~MPDNODE_SEGMENTTIMELINE;
             }
-            else if (strcmp(el, "SegmentTemplate") == 0)
+            else if (strcmp(el, "SegmentTemplate") == 0) // Closing tag segment template
             {
               dash->currentNode_ &= ~MPDNODE_SEGMENTTEMPLATE;
             }
@@ -1352,7 +1383,7 @@ static void XMLCALL end(void* data, const char* el)
               dash->currentNode_ &= ~MPDNODE_SEGMENTTIMELINE;
             }
           }
-          else if (strcmp(el, "SegmentTemplate") == 0)
+          else if (strcmp(el, "SegmentTemplate") == 0) // Closing tag
           {
             dash->currentNode_ &= ~MPDNODE_SEGMENTTEMPLATE;
           }
@@ -1633,6 +1664,34 @@ bool DASHTree::ParseManifest(const std::string& data)
   {
     LOG::LogF(LOGERROR, "Failed to parse the manifest file");
     return false;
+  }
+
+  for (auto period : periods_)
+  {
+    for (auto adpSet: period->adaptationSets_)
+    {
+      for (auto repr : adpSet->representations_)
+      {
+        SegmentTemplate* segmentTempl = repr->segtpl_;
+        if (!segmentTempl)
+          segmentTempl = adpSet->segtpl_;
+
+        if (segmentTempl)
+        {
+          if (repr->flags_ & AdaptiveTree::Representation::INITIALIZATION)
+          {
+            repr->url_ =
+                URL::Join(url, repr->segtpl_->initialization.substr(repr->base_url_.size()));
+          }
+          repr->segtpl_->media =
+              URL::Join(url, repr->segtpl_->media.substr(repr->base_url_.size()));
+        }
+        else
+        {
+          repr->url_ = url;
+        }
+      }
+    }
   }
 
   return true;

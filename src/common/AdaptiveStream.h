@@ -110,7 +110,8 @@ namespace adaptive
     bool prepareNextDownload();
     bool prepareDownload(const AdaptiveTree::Representation* rep,
                          const AdaptiveTree::Segment* seg,
-                         uint64_t segNum);
+                         uint64_t segNum,
+                         bool isInitSegment);
     int SecondsSinceUpdate() const;
     static void ReplacePlaceholder(std::string& url, const std::string placeholder, uint64_t value);
     bool ResolveSegmentBase(AdaptiveTree::Representation* rep, bool stopWorker);

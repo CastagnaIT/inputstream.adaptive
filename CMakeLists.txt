@@ -20,6 +20,7 @@ set(ADP_SOURCES
 	src/codechandler/ttml/TTML.cpp
 	src/common/AdaptiveStream.cpp
 	src/common/AdaptiveTree.cpp
+	src/common/BaseUrl.cpp
 	src/common/Chooser.cpp
 	src/common/ChooserAskQuality.cpp
 	src/common/ChooserDefault.cpp
@@ -71,6 +72,7 @@ set(ADP_HEADERS
     src/common/AdaptiveDecrypter.h
 	src/common/AdaptiveStream.h
 	src/common/AdaptiveTree.h
+	src/common/BaseUrl.h
 	src/common/Chooser.h
 	src/common/ChooserAskQuality.h
 	src/common/ChooserDefault.h

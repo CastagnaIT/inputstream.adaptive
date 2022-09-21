@@ -12,6 +12,8 @@
 #include "StringUtils.h"
 #include "kodi/tools/StringUtils.h"
 
+#include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <stdio.h>
 
@@ -341,4 +343,10 @@ std::string UTILS::GetVideoCodecDesc(std::string_view codecName)
   }
   else
     return "";
+}
+
+int UTILS::GenerateRandomNumber(int rangeMin, int rangeMax)
+{
+  int range = std::abs(rangeMax - rangeMin) + 1;
+  return std::rand() % range + rangeMin;
 }
