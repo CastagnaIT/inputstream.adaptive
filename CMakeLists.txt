@@ -13,6 +13,7 @@ set(DECRYPTERPATH "special://home/cdm")
 find_package(Kodi REQUIRED)
 find_package(pugixml REQUIRED)
 find_package(Bento4 REQUIRED)
+find_package(Curl REQUIRED)
 
 if(WIN32)
   if(MSVC)
@@ -59,6 +60,7 @@ list(APPEND DEPLIBS ${PUGIXML_LIBRARIES}
                     ${BENTO4_LIBRARIES}
                     mpegts
                     webm_parser
+                    ${CURL_LIBRARIES}
 )
 
 # Add additional dependencies
