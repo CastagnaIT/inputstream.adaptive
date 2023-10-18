@@ -16,3 +16,7 @@ if(NOT CORE_SYSTEM_NAME STREQUAL ios AND NOT CORE_SYSTEM_NAME STREQUAL darwin_em
     add_subdirectory(widevine)
   endif()
 endif()
+
+if(MSVC)
+	add_subdirectory(mediafoundation)
+endif()
