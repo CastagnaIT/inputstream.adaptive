@@ -676,6 +676,10 @@ void adaptive::CDashTree::ParseTagRepresentation(pugi::xml_node nodeRepr,
     repr->SetFrameRateScale(frameRateScale);
   }
 
+  std::string segmentProfilesStr;
+  if (XML::QueryAttrib(nodeRepr, "segmentProfiles", segmentProfilesStr))
+    repr->SetSegmentProfiles(segmentProfilesStr);
+
   std::string mimeType;
   if (XML::QueryAttrib(nodeRepr, "mimeType", mimeType))
   {

@@ -24,6 +24,17 @@ void PLAYLIST::CRepresentation::AddCodecs(const std::set<std::string>& codecs)
   m_codecs.insert(codecs.begin(), codecs.end());
 }
 
+void PLAYLIST::CRepresentation::SetSegmentProfiles(std::string_view segProfiles)
+{
+  m_segmentProfiles = STRING::SplitToVec(segProfiles, ',');
+}
+
+bool PLAYLIST::CRepresentation::HasSegmentProfile(std::string_view profile) const
+{
+  return std::find(m_segmentProfiles.cbegin(), m_segmentProfiles.cend(), profile) !=
+         m_segmentProfiles.cend();
+}
+
 void PLAYLIST::CRepresentation::CopyHLSData(const CRepresentation* other)
 {
   m_id = other->m_id;

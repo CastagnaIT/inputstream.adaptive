@@ -17,6 +17,7 @@
 #include "SrvBroker.h"
 #include "kodi/tools/StringUtils.h"
 #include "oscompat.h"
+#include "utils/CharArrayParser.h"
 #include "utils/CurlUtils.h"
 #include "utils/UrlUtils.h"
 #include "utils/log.h"
@@ -99,6 +100,12 @@ void adaptive::AdaptiveStream::DeallocateSegmentBuffers()
     delete *itSegBuf;
     itSegBuf = segment_buffers_.erase(itSegBuf);
   }
+}
+
+void adaptive::AdaptiveStream::ClearSegmentBuffer(SEGMENTBUFFER* segBuffer)
+{
+  segBuffer->buffer.clear();
+  segBuffer->isEos = false;
 }
 
 bool adaptive::AdaptiveStream::Download(const DownloadInfo& downloadInfo,
@@ -228,10 +235,19 @@ bool AdaptiveStream::PrepareNextDownload(DownloadInfo& downloadInfo)
     return false;
 
   SEGMENTBUFFER* segBuffer = segment_buffers_[valid_segment_buffers_];
+
+  // If last segment signal (lmsg on fMP4) has been found on the previoulsy downloaded segment data
+  // we don't have to start new downloads
+  if (segBuffer->rep->HasSegmentEndNr() &&
+    segBuffer->rep->GetSegmentEndNr() < segBuffer->segment_number - segBuffer->rep->GetStartNumber())
+  {
+    available_segment_buffers_ = valid_segment_buffers_;
+    return false;
+  }
+
   ++valid_segment_buffers_;
 
-  // Clear existing data
-  segBuffer->buffer.clear();
+  ClearSegmentBuffer(segBuffer);
   downloadInfo.m_segmentBuffer = segBuffer;
 
   return PrepareDownload(segBuffer->rep, segBuffer->segment, downloadInfo);
@@ -311,7 +327,7 @@ void AdaptiveStream::ResetActiveBuffer(bool oneValid)
   valid_segment_buffers_ = oneValid ? 1 : 0;
   available_segment_buffers_ = valid_segment_buffers_;
   absolute_position_ = 0;
-  segment_buffers_[0]->buffer.clear();
+  ClearSegmentBuffer(segment_buffers_[0]);
   segment_read_pos_ = 0;
 }
 
@@ -370,6 +386,7 @@ void AdaptiveStream::worker()
       if (!PrepareNextDownload(downloadInfo))
       {
         worker_processing_ = false;
+        thread_data_->signal_rw_.notify_all();
         continue;
       }
 
@@ -413,6 +430,29 @@ void AdaptiveStream::worker()
         std::lock_guard<std::mutex> lckrw(thread_data_->mutex_rw_);
         // Download cancelled or cannot download the file
         state_ = STOPPED;
+      }
+      else
+      {
+        if (CheckLastSegmentSignal(downloadInfo))
+        {
+          //! @todo: see lmsg on https://github.com/xbmc/inputstream.adaptive/pull/1422
+          //! 
+          //! problem 1: for live cases the isEos should not block the fragmentreader with eos
+          //! seem instead that the way should be avoid add new segments to the segment_buffers_
+          //! but currently this is done outside the worker and we have zero control of segment_buffers_
+          //! especially because we add all the segments at once by using max_buffer_length_,
+          //! a solution could be move the block of code of ensureSegment() in to the worker
+          //! but probably a different approach should also be used to handle the initialization segment
+          //! because now its added to segment_buffers_/downloads separately
+          //! 
+          //! problem 2: in the ensureSegment() we add all the segments at once by using max_buffer_length_
+          //! this looks more a kind of hack to fill the buffer in fast way, but, it prevent to have control
+          //! of the representation switching for adaptive streams,
+          //! so for all segments added with max_buffer_length_ there is no adaptive streams feature working
+          downloadInfo.m_segmentBuffer->isEos = true;
+          current_adp_->SetSegmentEndNr(downloadInfo.m_segmentBuffer->segment_number -
+                                        downloadInfo.m_segmentBuffer->rep->GetStartNumber());
+        }
       }
 
       // Signal finished download
@@ -726,9 +766,9 @@ bool AdaptiveStream::start_stream()
                   segment_buffers_.rend() - available_segment_buffers_, segment_buffers_.rend());
     ++available_segment_buffers_;
 
+    ClearSegmentBuffer(segment_buffers_[0]);
     segment_buffers_[0]->segment = *current_rep_->GetInitSegment();
     segment_buffers_[0]->rep = current_rep_;
-    segment_buffers_[0]->buffer.clear();
     segment_read_pos_ = 0;
 
     // Force writing the data into segment_buffers_[0]
@@ -955,6 +995,10 @@ bool AdaptiveStream::ensureSegment()
   return true;
 }
 
+bool adaptive::AdaptiveStream::IsEosSegment()
+{
+  return segment_buffers_[0]->isEos;
+}
 
 uint32_t AdaptiveStream::read(void* buffer, uint32_t bytesToRead)
 {
@@ -1260,6 +1304,29 @@ bool AdaptiveStream::GenerateSidxSegments(PLAYLIST::CRepresentation* rep)
     return true;
   }
 
+  return false;
+}
+
+bool adaptive::AdaptiveStream::CheckLastSegmentSignal(DownloadInfo& downloadInfo)
+{
+  std::vector<uint8_t>& buffer = downloadInfo.m_segmentBuffer->buffer;
+
+  if (buffer.empty() || downloadInfo.m_segmentBuffer->rep->GetContainerType() != ContainerType::MP4)
+  {
+    return false;
+  }
+
+  // Find on the MP4 ISOBMFF data the optional STYP atom, to check the signal of last segment
+  CAtom atom(buffer.data(), buffer.size());
+  if (atom.GetType() == AP4_ATOM_TYPE_STYP)
+  {
+    CAtomStyp stypAtom = atom;
+    if (stypAtom.IsBrandCompatible(MP4_BOX_LMSG_BRAND))
+    {
+      LOG::LogF(LOGDEBUG, "[AS-%u] Found Last Media Segment signal (lmsg)", clsId);
+      return true;
+    }
+  }
   return false;
 }
 

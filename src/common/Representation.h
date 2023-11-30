@@ -125,6 +125,9 @@ public:
   uint64_t GetDuration() const { return m_duration; }
   void SetDuration(uint64_t duration) { m_duration = duration; }
 
+  void SetSegmentProfiles(std::string_view segProfiles);
+  bool HasSegmentProfile(std::string_view profile) const;
+
   /*!
    * \brief Determines when the representation contains subtitles as single file
    *        for the entire duration of the video.
@@ -281,6 +284,8 @@ protected:
   uint64_t m_startNumber{1};
 
   CSpinCache<CSegment> m_segmentTimeline;
+
+  std::vector<std::string> m_segmentProfiles;
 
   uint64_t m_duration{0};
   uint32_t m_timescale{0};

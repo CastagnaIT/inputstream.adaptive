@@ -136,32 +136,35 @@ AP4_Result CFragmentedSampleReader::ReadSample()
         m_protectedDesc &&
         (m_decrypterCaps.flags & DRM::DecrypterCapabilites::SSD_SECURE_PATH) != 0;
     bool decrypterPresent{m_decrypter != nullptr};
+
+    auto adByteStream = dynamic_cast<CAdaptiveByteStream*>(m_FragmentStream);
+    if (!adByteStream)
+    {
+      LOG::LogF(LOGERROR, "Fragment stream cannot be casted to AdaptiveByteStream");
+      m_eos = true;
+      return AP4_ERROR_INTERNAL;
+    }
+
     if (AP4_FAILED(result = ReadNextSample(m_track->GetId(), m_sample,
                                            (m_decrypter || useDecryptingDecoder) ? m_encrypted
                                                                                  : m_sampleData)))
     {
       if (result == AP4_ERROR_EOS)
       {
-        auto adByteStream = dynamic_cast<CAdaptiveByteStream*>(m_FragmentStream);
-        if (!adByteStream)
+        if (adByteStream->waitingForSegment())
         {
-          LOG::LogF(LOGERROR, "Fragment stream cannot be casted to AdaptiveByteStream");
-          m_eos = true;
+          m_sampleData.SetDataSize(0);
         }
         else
         {
-          if (adByteStream->waitingForSegment())
-          {
-            m_sampleData.SetDataSize(0);
-          }
-          else
-          {
-            m_eos = true;
-          }
+          m_eos = true;
         }
       }
       return result;
     }
+
+    if (adByteStream->IsEosSegment())
+      m_eos = true;
 
     //AP4_AvcSequenceParameterSet sps;
     //AP4_AvcFrameParser::ParseFrameForSPS(m_sampleData.GetData(), m_sampleData.GetDataSize(), 4, sps);

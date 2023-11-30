@@ -10,6 +10,7 @@
 
 #include "AdaptiveStream.h"
 #include "Representation.h"
+#include "utils/CharArrayParser.h"
 #include "utils/Utils.h"
 
 #include <cinttypes>
@@ -24,6 +25,12 @@
 #endif
 
 using namespace UTILS;
+
+namespace
+{
+constexpr size_t MP4_BOX_HEADER_SIZE = 8;
+constexpr uint64_t MP4_BOX_USE_LARGE_SIZE = 1; // "largesize" field signal for box size at 64bit
+} // unnamed namespace
 
 std::string_view PLAYLIST::StreamTypeToString(const StreamType streamType)
 {
@@ -148,4 +155,54 @@ AP4_Movie* PLAYLIST::CreateMovieAtom(adaptive::AdaptiveStream& adStream,
   moov->AddChild(new AP4_ContainerAtom(AP4_ATOM_TYPE_MVEX));
   movie->SetMoovAtom(moov);
   return movie;
+}
+
+PLAYLIST::CAtom::CAtom(const uint8_t* dataBuffer, size_t size)
+{
+  CCharArrayParser parser;
+  parser.Reset(dataBuffer, size);
+
+  if (parser.CharsLeft() < MP4_BOX_HEADER_SIZE)
+    return;
+
+  m_boxSize = static_cast<uint64_t>(parser.ReadNextUnsignedInt());
+  m_boxType = parser.ReadNextUnsignedInt();
+
+  if (m_boxSize == MP4_BOX_USE_LARGE_SIZE && parser.CharsLeft() >= 8)
+    m_boxSize = parser.ReadNextUnsignedInt64();
+
+  if (m_boxSize == 0)
+    return;
+
+  m_payload = parser.GetDataPos();
+}
+
+PLAYLIST::CAtomStyp::CAtomStyp(const CAtom& atom) : CAtom(atom)
+{
+  if (m_boxType != AP4_ATOM_TYPE_STYP || !m_payload)
+    return;
+
+  CCharArrayParser parser;
+  parser.Reset(m_payload, m_boxSize);
+
+  if (parser.CharsLeft() < 8)
+  {
+    LOG::LogF(LOGERROR, "Cannot parse STYP atom, size mismatch");
+    return;
+  }
+
+  m_majorBrand = parser.ReadNextUnsignedInt();
+  m_minorVersion = parser.ReadNextUnsignedInt();
+
+  // Read compatible brands
+  while (parser.CharsLeft() >= 4)
+  {
+    m_compatibleBrands.emplace_back(parser.ReadNextUnsignedInt());
+  }
+}
+
+bool PLAYLIST::CAtomStyp::IsBrandCompatible(uint32_t brand) const
+{
+  return std::find(m_compatibleBrands.cbegin(), m_compatibleBrands.cend(), brand) !=
+         m_compatibleBrands.cend();
 }

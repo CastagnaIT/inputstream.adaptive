@@ -123,6 +123,38 @@ bool ParseRangeValues(std::string_view range,
 AP4_Movie* CreateMovieAtom(adaptive::AdaptiveStream& adStream,
                            kodi::addon::InputstreamInfo& streamInfo);
 
+constexpr uint32_t MP4_BOX_LMSG_BRAND = 'lmsg'; // Last Media Segment signal
+
+// \brief MP4 Atom
+class CAtom
+{
+public:
+  CAtom(const uint8_t* dataBuffer, size_t size);
+
+  uint64_t GetSize() const { return m_boxSize; }
+  uint32_t GetType() const { return m_boxType; }
+
+protected:
+  const uint8_t* m_payload{nullptr};
+  uint64_t m_boxSize{0};
+  uint32_t m_boxType{0};
+};
+
+// \brief MP4 STYP Atom
+class CAtomStyp : public CAtom
+{
+public:
+  CAtomStyp(const CAtom& atom);
+
+  uint32_t GetMajorBrand() const { return m_majorBrand; }
+  bool IsBrandCompatible(uint32_t brand) const;
+
+protected:
+  uint32_t m_majorBrand{0};
+  uint32_t m_minorVersion{0};
+  std::vector<uint32_t> m_compatibleBrands;
+};
+
 template<typename T>
 class CSpinCache
 {

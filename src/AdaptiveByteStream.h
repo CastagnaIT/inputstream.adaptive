@@ -45,6 +45,12 @@ public:
   void FixateInitialization(bool on);
   void SetSegmentFileOffset(uint64_t offset);
 
+  /*!
+   * \brief Check if current segment has been signalled as the last one.
+   * \return True if it is the last segment, otherwise false.
+   */
+  bool IsEosSegment();
+
 protected:
   adaptive::AdaptiveStream* m_adStream;
 };

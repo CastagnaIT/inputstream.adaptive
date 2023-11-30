@@ -73,6 +73,7 @@ class AdaptiveTree;
     PLAYLIST::StreamType GetStreamType() const;
 
     bool ensureSegment();
+    bool IsEosSegment();
     uint32_t read(void* buffer, uint32_t  bytesToRead);
     uint64_t tell(){ read(0, 0);  return absolute_position_; };
     bool seek(uint64_t const pos);
@@ -126,11 +127,17 @@ class AdaptiveTree;
       PLAYLIST::CSegment segment;
       uint64_t segment_number{0};
       PLAYLIST::CRepresentation* rep{nullptr};
+      bool isEos{false}; // End of stream signal
     };
     std::vector<SEGMENTBUFFER*> segment_buffers_;
 
     void AllocateSegmentBuffers(size_t size);
     void DeallocateSegmentBuffers();
+    /*!
+    * \brief Clear members values of specified segment buffer
+    * \param segBuffer The segment buffer to be cleared
+    */
+    void ClearSegmentBuffer(SEGMENTBUFFER* segBuffer);
 
     // Info to execute the download
     struct DownloadInfo
@@ -191,6 +198,8 @@ class AdaptiveTree;
     int SecondsSinceUpdate() const;
     static void ReplacePlaceholder(std::string& url, const std::string placeholder, uint64_t value);
     bool GenerateSidxSegments(PLAYLIST::CRepresentation* rep);
+
+    bool CheckLastSegmentSignal(DownloadInfo& downloadInfo);
 
     struct THREADDATA
     {

@@ -64,3 +64,8 @@ void CAdaptiveByteStream::SetSegmentFileOffset(uint64_t offset)
 {
   m_adStream->SetSegmentFileOffset(offset);
 }
+
+bool CAdaptiveByteStream::IsEosSegment()
+{
+  return m_adStream->IsEosSegment();
+}
