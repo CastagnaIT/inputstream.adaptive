@@ -9,7 +9,7 @@
 #include "TSSampleReader.h"
 
 #include "AdaptiveByteStream.h"
-
+#include "utils/log.h"
 CTSSampleReader::CTSSampleReader(AP4_ByteStream* input,
                                INPUTSTREAM_TYPE type,
                                AP4_UI32 streamId,
@@ -85,7 +85,10 @@ AP4_Result CTSSampleReader::ReadSample()
     return AP4_SUCCESS;
   }
   if (!m_adByteStream || !m_adByteStream->waitingForSegment())
-    m_eos = true;
+  {
+    //m_eos = true;
+    LOG::LogF(LOGWARNING, "waitingForSegment IS FALSE");
+  }
   return AP4_ERROR_EOS;
 }
 
