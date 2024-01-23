@@ -1146,7 +1146,7 @@ bool CSession::GetNextSample(ISampleReader*& sampleReader)
         waiting = stream.get();
         break;
       }
-      else if (!streamReader->EOS())
+      else if (streamReader->IsReady() && !streamReader->EOS())
       {
         if (AP4_SUCCEEDED(streamReader->Start(isStarted)))
         {

@@ -30,6 +30,7 @@ public:
 
   bool IsStarted() const override { return m_started; }
   bool EOS() const override { return m_eos; }
+  bool IsReady() override;
   uint64_t DTS() const override { return m_pts; }
   uint64_t PTS() const override { return m_pts; }
   AP4_Result Start(bool& bStarted) override;
