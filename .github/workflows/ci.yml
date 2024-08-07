@@ -52,7 +52,7 @@ jobs:
       ARCH: x86
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -65,7 +65,7 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ github.workspace }}/kodi-git/zip_content
@@ -79,7 +79,7 @@ jobs:
       ARCH: x86_64
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -92,21 +92,21 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ github.workspace }}/kodi-git/zip_content
   build-android-arm64:
     if: github.event.inputs.platformArch == 'all' || github.event.inputs.platformArch == 'android' || github.event.inputs.platformArch == 'android-arm64' || github.event.inputs.platformArch == 'default'
     name: Build Android aarch64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       KODI_VERSION: omega
       PLATFORM: android
       ARCH: aarch64
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -119,21 +119,21 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ steps.run-bash.outputs.zip-path }}
   build-android-arm:
     if: github.event.inputs.platformArch == 'all' || github.event.inputs.platformArch == 'android' || github.event.inputs.platformArch == 'android-arm'
     name: Build Android armv7
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       KODI_VERSION: omega
       PLATFORM: android
       ARCH: armv7
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -146,7 +146,7 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ steps.run-bash.outputs.zip-path }}
@@ -160,7 +160,7 @@ jobs:
       ARCH: x86_64
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -173,7 +173,7 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ steps.run-bash.outputs.zip-path }}
@@ -187,7 +187,7 @@ jobs:
       ARCH: armv7
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -200,7 +200,7 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ steps.run-bash.outputs.zip-path }}
@@ -227,7 +227,7 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ steps.run-bash.outputs.zip-path }}
@@ -241,7 +241,7 @@ jobs:
       ARCH: x86_64
     steps:
     - name: Check out ${{ github.event.inputs.customISABranch }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.customISABranch }}
     - name: Copy build_scripts file from default branch
@@ -254,7 +254,7 @@ jobs:
       shell: bash
       working-directory: build_scripts
     - name: Upload zipped artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.run-bash.outputs.zip-name }}
         path: ${{ steps.run-bash.outputs.zip-path }}
