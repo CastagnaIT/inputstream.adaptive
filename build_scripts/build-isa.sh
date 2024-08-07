@@ -87,7 +87,7 @@ echo "GITHUB_WORKSPACE dirname path: $(dirname "$GITHUB_WORKSPACE")"
 ### CONFIGURE ANDROID TOOLS ###
 if [[ $PLATFORM = android ]]; then
     # The SDK is pre-installed in the virtual enviroment
-    echo "yes" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;$NDK_VER" >/dev/null
+    ###echo "yes" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;$NDK_VER" >/dev/null
 
     CONFIGURE_EXTRA_OPTIONS="--with-ndk-api=21 --with-sdk-path=${ANDROID_SDK_ROOT} --with-ndk-path=${ANDROID_HOME}/ndk/$NDK_VER"
 fi

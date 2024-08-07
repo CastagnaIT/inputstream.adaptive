@@ -113,6 +113,11 @@ jobs:
       uses: Bhacaz/checkout-files@v2
       with:
        files: build_scripts
+    - uses: nttld/setup-ndk@v1
+      id: setup-ndk
+      with:
+        ndk-version: r21e
+        local-cache: true
     - name: Run build-isa.sh bash
       id: run-bash
       run: bash -x build-isa.sh
