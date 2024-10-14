@@ -13,6 +13,7 @@ set(CMAKE_FIND_FRAMEWORK LAST)
 set(DECRYPTERPATH "special://home/cdm")
 
 find_package(Kodi REQUIRED)
+find_package(Atomic REQUIRED)
 find_package(pugixml REQUIRED)
 find_package(Bento4 REQUIRED)
 find_package(RAPIDJSON REQUIRED)
@@ -32,10 +33,6 @@ else()
   list(APPEND DEPLIBS ${CMAKE_DL_LIBS})
   # Required on some old linux platforms to use macro like PRIu64
   add_definitions(-D__STDC_FORMAT_MACROS)
-endif()
-
-if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
-  list(APPEND DEPLIBS "atomic")
 endif()
 
 # Sources to build
@@ -62,7 +59,8 @@ if(ENABLE_INTERNAL_BENTO4)
   add_dependencies(webm_parser bento4)
 endif()
 
-list(APPEND DEPLIBS ${PUGIXML_LIBRARIES}
+list(APPEND DEPLIBS ${ATOMIC_LIBRARIES}
+                    ${PUGIXML_LIBRARIES}
                     ${BENTO4_LIBRARIES}
                     ${RAPIDJSON_LIBRARIES}
                     mpegts
