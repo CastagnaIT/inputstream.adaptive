@@ -20,10 +20,15 @@ set(atomic_code
      #include <atomic>
      #include <cstdint>
      std::atomic<uint8_t> n8 (0); // riscv64
+     std::atomic<uint16_t> n16 (0);
      std::atomic<uint64_t> n64 (0); // armel, mipsel, powerpc
      int main() {
        ++n8;
+       ++n16;
        ++n64;
+       n8.load();
+       n16.load();
+       n64.load();
        return 0;
      }")
 
