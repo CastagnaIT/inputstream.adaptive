@@ -28,16 +28,24 @@ if [[ $KODI_VERSION == "leia" ]]; then
     KODI_BRANCH="Leia"
     ISA_BRANCH="Leia"
     NDK_VER="18.1.5063045"
+	NDK_API=21
 elif [[ $KODI_VERSION == "matrix" ]]; then
     KODI_BRANCH="Matrix"
     ISA_BRANCH="Matrix"
     NDK_VER="20.1.5948944"
+	NDK_API=21
 elif [[ $KODI_VERSION == "omega" ]]; then
-    KODI_BRANCH="master"
+    KODI_BRANCH="Omega"
     ISA_BRANCH="Omega"
     NDK_VER="21.4.7075529"
+	NDK_API=21
+elif [[ $KODI_VERSION == "piers" ]]; then
+    KODI_BRANCH="master"
+    ISA_BRANCH="Piers"
+    NDK_VER="27.2.12479018"
+	NDK_API=24
 else
-    echo "Kodi version $KODI_VERSION not valid, supported versions [leia,matrix,omega]"
+    echo "Kodi version $KODI_VERSION not valid, supported versions [leia,matrix,omega,piers]"
     exit 1
 fi
 
@@ -83,9 +91,10 @@ echo "GITHUB_WORKSPACE dirname path: $(dirname "$GITHUB_WORKSPACE")"
 ### CONFIGURE ANDROID TOOLS ###
 if [[ $PLATFORM = android ]]; then
     # The SDK is pre-installed in the virtual enviroment
-    echo "yes" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;$NDK_VER" >/dev/null
+    #commented see  preinstalled https://github.com/actions/runner-images
+	#echo "yes" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VER" >/dev/null
 
-    CONFIGURE_EXTRA_OPTIONS="--with-ndk-api=21 --with-sdk-path=${ANDROID_SDK_ROOT} --with-ndk-path=${ANDROID_HOME}/ndk/$NDK_VER"
+    CONFIGURE_EXTRA_OPTIONS="--with-ndk-api=${NDK_VER} --with-sdk-path=${ANDROID_SDK_ROOT} --with-ndk-path=${ANDROID_NDK_HOME}"
 fi
 
 
@@ -145,7 +154,7 @@ if [[ $PLATFORM != windows ]]; then
 else
     mkdir -p $ISA_PATH/build && cd "$_"
 fi
-cmake -G "$CMAKE_GENERATOR" $CMAKE_TOOLSET -DCMAKE_BUILD_TYPE=Release -DOVERRIDE_PATHS=ON $TOOLCHAIN_OPTION -DADDONS_TO_BUILD=$ADDON_ID -DADDON_SRC_PREFIX=$(dirname "$GITHUB_WORKSPACE") -DADDONS_DEFINITION_DIR=$KODI_GIT_XBMC/tools/depends/target/binary-addons/addons2 -DPACKAGE_ZIP=1 $KODI_GIT_XBMC/cmake/addons
+cmake -G "$CMAKE_GENERATOR" $CMAKE_TOOLSET -DCMAKE_BUILD_TYPE=Release -DOVERRIDE_PATHS=ON $TOOLCHAIN_OPTION -DADDONS_TO_BUILD=$ADDON_ID -DADDON_SRC_PREFIX=$(dirname "$GITHUB_WORKSPACE") -DADDONS_DEFINITION_DIR=$KODI_GIT_XBMC/tools/depends/target/binary-addons/addons2 -DPACKAGE_ZIP=ON -DPACKAGE_DIR=$KODI_GIT_XBMC/build_zip $KODI_GIT_XBMC/cmake/addons
 
 
 ### BULD THE ADD-ON PACKAGE & MOVE/RENAME THE ZIP FILE ###
