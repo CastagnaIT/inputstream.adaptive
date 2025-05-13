@@ -849,9 +849,30 @@ bool SESSION::CSession::GetNextSample(ISampleReader*& sampleReader)
     ISampleReader* sr{res->GetReader()};
 
     if (sr->PTS() != STREAM_NOPTS_VALUE)
+    {
       m_elapsedTime = PTSToElapsed(sr->PTS()) + GetChapterStartTime();
+      /*
+      uint64_t periodStartMs = 0;
+      uint64_t timeRel = (periodStartMs + m_adaptiveTree->available_time_) * 1000;
+      m_elapsedTime += timeRel;*/
+    }
 
     sampleReader = sr;
+
+
+    uint64_t periodStartMs = 0;
+    uint64_t timeRel = (periodStartMs + m_adaptiveTree->available_time_) * 1000;
+
+
+    if (pts_start_ == 0)
+    {
+      start_time_ = time(nullptr) * 1000; //sr->DTSorPTS() + timeRel;
+
+      m_startedTimePoint = std::chrono::high_resolution_clock::now();
+      //pts_start_ = GetTimeshiftBufferStart() + ((GetTimeshiftBufferDurationMs() - 20000) * 1000);
+    }
+    pts_start_ = sr->DTSorPTS() + timeRel;
+
     return true;
   }
   return false;
@@ -1061,6 +1082,44 @@ bool SESSION::CSession::OnGetStream(int streamid, kodi::addon::InputstreamInfo& 
 
     info = stream->m_info;
   }
+
+  return true;
+}
+
+bool SESSION::CSession::GetLiveTimes(kodi::addon::InputstreamTimes& times)
+{
+  if (pts_start_ == 0)
+  {
+    times.SetStartTime(start_time_);
+    times.SetPtsStart(0);
+    times.SetPtsBegin(0);
+    times.SetPtsEnd(0);
+  }
+  else
+  {
+    uint64_t periodStartMs = 0;
+    uint64_t timeRel = (periodStartMs + m_adaptiveTree->available_time_) * 1000;
+
+    uint64_t timeshiftStartPts = GetTimeshiftBufferStart() + timeRel;
+    uint64_t timeshiftEndPts = timeshiftStartPts + (GetTimeshiftBufferDurationMs() * 1000);
+
+    times.SetStartTime(start_time_); // not GUI related
+
+    uint64_t ptsStart = pts_start_ / 1000;
+
+    //times.SetPtsBegin(ptsStart);
+    times.SetPtsBegin(timeshiftStartPts / 1000);
+    times.SetPtsStart(timeshiftStartPts / 1000);
+    times.SetPtsEnd(timeshiftEndPts / 1000);
+
+    LOG::LogF(LOGWARNING, 
+              "XXXX StartTime: %lld, ptsStart: %lld, ptsBegin: %lld, ptsEnd: %lld",
+              times.GetStartTime(), static_cast<uint64_t>(times.GetPtsStart()),
+              static_cast<uint64_t>(times.GetPtsBegin()),
+              static_cast<uint64_t>(times.GetPtsEnd()));
+  }
+
+  LOG::LogF(LOGWARNING, "XXXX BuferSizeMs: %lld", GetTimeshiftBufferDurationMs());
 
   return true;
 }

@@ -44,6 +44,7 @@ public:
   int GetTotalTime() override;
   int GetTime() override;
   bool IsRealTimeStream() override;
+  bool GetTimes(kodi::addon::InputstreamTimes& times) override;
 
 #if INPUTSTREAM_VERSION_LEVEL > 1
   int GetChapter() override;
@@ -63,6 +64,8 @@ private:
   // The last PTS of the segment package fed to kodi.
   // NO_PTS_VALUE only when playback starts or a new period starts
   std::atomic<uint64_t> m_lastPts{PLAYLIST::NO_PTS_VALUE};
+
+  uint64_t pts_start_ = 0;
 
   void UnlinkIncludedStreams(SESSION::CStream* stream);
 };

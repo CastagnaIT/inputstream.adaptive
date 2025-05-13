@@ -264,6 +264,9 @@ public:
 
   const DRM::CDRMEngine& GetDRMEngine() const { return m_drmEngine; }
 
+  bool GetLiveTimes(kodi::addon::InputstreamTimes& times);
+
+
 protected:
   /*!
    * \brief Determine the AdaptationSet that should be the default to be played,
@@ -272,6 +275,8 @@ protected:
    * \return The AdaptationSet, or nullptr if unhandled
    */
   PLAYLIST::CAdaptationSet* DetermineDefaultAdpSet(PLAYLIST::CPeriod* period);
+  uint64_t GetTimeshiftBufferDurationMs() const { return m_adaptiveTree->m_totalTime; };
+
 
 private:
   DRM::CDRMEngine m_drmEngine;
@@ -287,5 +292,9 @@ private:
   uint64_t m_chapterStartTime{0}; // In STREAM_TIME_BASE
   double m_chapterSeekTime{0.0}; // In seconds
   uint8_t m_mediaTypeMask{0};
+
+  uint64_t start_time_;
+  uint64_t pts_start_ = 0;
+  std::chrono::high_resolution_clock::time_point m_startedTimePoint;
 };
 } // namespace SESSION

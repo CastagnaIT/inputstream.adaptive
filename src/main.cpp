@@ -16,6 +16,8 @@
 #include "utils/ThreadPool.h"
 #include "utils/log.h"
 
+#include <kodi/addon-instance/inputstream/TimingConstants.h>
+
 using namespace PLAYLIST;
 using namespace SESSION;
 
@@ -121,8 +123,8 @@ void CInputStreamAdaptive::GetCapabilities(kodi::addon::InputstreamCapabilities&
 {
   LOG::Log(LOGDEBUG, "GetCapabilities()");
   uint32_t mask = INPUTSTREAM_SUPPORTS_IDEMUX | INPUTSTREAM_SUPPORTS_IDISPLAYTIME |
-                  INPUTSTREAM_SUPPORTS_IPOSTIME | INPUTSTREAM_SUPPORTS_SEEK |
-                  INPUTSTREAM_SUPPORTS_PAUSE;
+                  INPUTSTREAM_SUPPORTS_ITIME | INPUTSTREAM_SUPPORTS_IPOSTIME |
+                  INPUTSTREAM_SUPPORTS_SEEK | INPUTSTREAM_SUPPORTS_PAUSE;
 #if INPUTSTREAM_VERSION_LEVEL > 1
   mask |= INPUTSTREAM_SUPPORTS_ICHAPTER;
 #endif
@@ -451,6 +453,27 @@ int CInputStreamAdaptive::GetTime()
 bool CInputStreamAdaptive::IsRealTimeStream()
 {
   return m_session && m_session->IsLive();
+}
+
+bool CInputStreamAdaptive::GetTimes(kodi::addon::InputstreamTimes& times)
+{
+  if (!m_session)
+    return false;
+
+  if (m_session->IsLive())
+  {
+    m_session->GetLiveTimes(times);
+  }
+  else // VOD
+  {
+    times.SetStartTime(0);
+    times.SetPtsStart(0);
+    times.SetPtsBegin(0);
+    //times.ptsEnd = static_cast<int64_t>(m_session->GetCurrentDuration()) * DVD_TIME_BASE;
+    times.SetPtsEnd(static_cast<int64_t>(m_session->GetTotalTimeMs() / 1000) * STREAM_TIME_BASE); // We need the total duration in seconds of the VOD viewing here.
+  }
+
+  return true;
 }
 
 #if INPUTSTREAM_VERSION_LEVEL > 1

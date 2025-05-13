@@ -1058,11 +1058,14 @@ void adaptive::CDashTree::ParseTagRepresentation(pugi::xml_node nodeRepr,
       const uint64_t periodStartScaled = periodStartMs * segTemplate->GetTimescale() / 1000;
 
       //! @todo: PTO a/v sync to be implemented on session/demuxers
-      const bool hasPTO = segTemplate->HasPresTimeOffset();
+      // const bool hasPTO = segTemplate->HasPresTimeOffset();
 
       if (segTemplate->HasTimeline()) // Generate segments from template timeline
       {
         uint64_t time{0};
+
+        // To get the real absolute timestamp
+        uint64_t timeRel = (periodStartMs + available_time_) * segTemplate->GetTimescale() / 1000;
 
         for (const auto& tlElem : segTemplate->Timeline())
         {
@@ -1073,12 +1076,12 @@ void adaptive::CDashTree::ParseTagRepresentation(pugi::xml_node nodeRepr,
           do
           {
             CSegment seg;
-            seg.startPTS_ = time;
+            seg.startPTS_ = time + timeRel;
             // If no PTO, the "t" value on <SegmentTimeline><S> element should be relative to period start
             // this may be wrong, has been added to try fix following sample stream
             // https://d24rwxnt7vw9qb.cloudfront.net/v1/dash/e6d234965645b411ad572802b6c9d5a10799c9c1/All_Reference_Streams//6e16c26536564c2f9dbc5f725a820cff/index.mpd
-            if (!hasPTO)
-              seg.startPTS_ += periodStartScaled;
+            //if (!hasPTO)
+            //  seg.startPTS_ += periodStartScaled;
             seg.m_endPts = seg.startPTS_ + tlElem.duration;
 
             if (hasMediaNumber)
