@@ -1103,14 +1103,30 @@ bool SESSION::CSession::GetLiveTimes(kodi::addon::InputstreamTimes& times)
     uint64_t timeshiftStartPts = GetTimeshiftBufferStart() + timeRel;
     uint64_t timeshiftEndPts = timeshiftStartPts + (GetTimeshiftBufferDurationMs() * 1000);
 
+    LOG::LogF(LOGWARNING, "XXXX timeshiftStartPts: %lld, timeshiftEndPts: %lld", timeshiftStartPts,
+              timeshiftEndPts);
+
+    uint64_t dur = timeshiftEndPts - timeshiftStartPts;
+
     times.SetStartTime(start_time_); // not GUI related
 
     uint64_t ptsStart = pts_start_ / 1000;
 
     //times.SetPtsBegin(ptsStart);
-    times.SetPtsBegin(timeshiftStartPts / 1000);
-    times.SetPtsStart(timeshiftStartPts / 1000);
-    times.SetPtsEnd(timeshiftEndPts / 1000);
+    /*
+    times.SetPtsStart(dur / 1000); //m_time (what is? for total duration?)
+    times.SetPtsBegin(0); // timeMin = (times.ptsBegin - times.ptsStart)
+    times.SetPtsEnd(dur * 2 / 1000); // timeMax = (times.ptsEnd - times.ptsStart)
+    */
+
+    // apparently works but video seek is full broken
+    times.SetPtsStart(0); //m_time (what is? for total duration?)
+    times.SetPtsBegin((pts_start_ - dur)); // timeMin = (times.ptsBegin - times.ptsStart)
+    times.SetPtsEnd((pts_start_)); // timeMax = (times.ptsEnd - times.ptsStart)
+
+    // play % calc: 
+    // iTotalTime = m_timeInfo.m_timeMax - m_timeInfo.m_timeMin
+    // % = m_timeInfo.m_time * 100 / static_cast<float>(iTotalTime);
 
     LOG::LogF(LOGWARNING, 
               "XXXX StartTime: %lld, ptsStart: %lld, ptsBegin: %lld, ptsEnd: %lld",
