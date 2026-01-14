@@ -9,6 +9,7 @@
 #include "Segment.h"
 #include "utils/log.h"
 
+#include <algorithm>
 #include <ranges>
 
 using namespace PLAYLIST;
@@ -138,15 +139,35 @@ const CSegment* PLAYLIST::CSegContainer::Find(const CSegment& seg) const
 
 const CSegment* PLAYLIST::CSegContainer::FindByPTSOrNext(uint64_t pts) const
 {
-  for (const CSegment& seg : m_segments)
-  {
-    if (seg.startPTS_ <= pts && pts <= seg.m_endPts)
-      return &seg;
+  if (m_segments.empty())
+    return nullptr;
 
-    if (seg.startPTS_ > pts)
-      return &seg;
+  // Use binary search (std::ranges::upper_bound) on startPTS_ which is sorted.
+  // upper_bound returns the first element with startPTS_ > pts.
+  auto it = std::ranges::upper_bound(m_segments, pts, std::ranges::less{}, &CSegment::startPTS_);
+
+  if (it == m_segments.begin())
+  {
+    // First segment starts after pts -> return that segment.
+    return &*it;
   }
-  return nullptr;
+
+  if (it == m_segments.end())
+  {
+    // pts is >= startPTS_ of the last element; check whether it's inside the last segment.
+    const CSegment& last = m_segments.back();
+    if (last.startPTS_ <= pts && pts <= last.m_endPts)
+      return &last;
+    return nullptr;
+  }
+
+  // Check previous segment: it may contain pts.
+  auto prev = std::prev(it);
+  if (prev->startPTS_ <= pts && pts <= prev->m_endPts)
+    return &*prev;
+
+  // Otherwise return the first segment that starts after pts.
+  return &*it;
 }
 
 const size_t PLAYLIST::CSegContainer::GetPos(const CSegment& seg) const

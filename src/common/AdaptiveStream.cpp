@@ -25,6 +25,8 @@
 #include <cstring>
 #include <iostream>
 
+#include <chrono>
+
 #include <bento4/Ap4.h>
 
 #include <kodi/addon-instance/inputstream/TimingConstants.h>
@@ -1190,7 +1192,12 @@ bool adaptive::AdaptiveStream::seek_time(double seek_seconds, bool preceeding, b
 
   const uint64_t pts = static_cast<uint64_t>(seek_seconds * current_rep_->GetTimescale());
 
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   const CSegment* seekSeg = current_rep_->Timeline().FindByPTSOrNext(pts);
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  LOG::LogF(LOGERROR, "TIME ELAPSED %lli ms ", 
+            std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+
   const std::optional<CSegment> oldSeg = current_rep_->current_segment_;
 
   if (seekSeg)
